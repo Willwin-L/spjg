@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>数量增加 价格增加</title>
+        <style>
+            *{padding: 0;margin: 0;}
+            ul{list-style: none}
+            .goodslist{margin: 40px 270px}
+            .goods{overflow: hidden;border: 1px solid #ccc;}
+            img{width: 100%}
+            .shangpin img{width: 200px;height: 200px}
+            .goods>div{float: left}
+            .goods .jiage,.zongjia{width: 150px;height: 50px;line-height: 50px;text-align: center;background-color: #ccc;opacity: 0.5;margin:50px 10px;}
+            .goods .shuliang{width: 300px;height: 50px;line-height: 50px;text-align: center; background-color: #ccc;opacity: 0.5; margin:50px 10px}
+            .goods .shuliang .add,.minus{width: 20px;height: 20px}
+            .zonghe{background-color: #eee; width: 150px;height: 25px;line-height: 25px;text-align: center; margin: -5% 67.5%}
+            .load{width: 200px;height: 50px;margin: 7% 45%;line-height: 50px;text-align: center;}
+        </style>
+        <script src="jquery-1.8.3.min.js"></script>
+        <script>
+
+            //计算商品的总价格 1调用一个函数2遍历元素
+            function getTotal(){
+               
+                var zong = 0;
+                $(".zongjia-v").each(function(index,node){
+                   
+                    zong += Number($(node).html());
+                    $(".zonghe>.zonghe-v").html(zong.toFixed(2))
+                })
+            }
+
+
+
+            $(function(){
+
+                $(".add").live("click",function(){
+
+                    var num = $(this).closest(".goods").find(".number");
+                    var numv = parseInt(num.val())+1;
+                    num.val(numv)
+
+
+                    var price =parseFloat($(this).closest(".goods").find(".jiage-v").html());
+                    var total = price*numv;
+                    $(this).closest(".goods").find(".zongjia-v").html(total.toFixed(2))
+
+                    getTotal();
+                })
+
+                $(".minus").live("click",function(){
+                    var num = $(this).closest(".goods").find(".number");
+                    var numv = parseInt(num.val())-1;
+                    if(numv<1){
+                        numv=0
+                    }
+                    num.val(numv)
+
+                    //计算商品减法的单价
+                    var price = parseFloat($(this).closest(".goods").find(".jiage-v").html())
+                    var total = price*numv;
+                    $(this).closest(".goods").find(".zongjia-v").html(total.toFixed(2))
+
+                    getTotal();
+                })
+
+                //定义一个定时器 
+                var timer = 0;
+                $(window).scroll(function(){
+                    var ys = $(document).height();
+                    var sh = $(window).scrollTop();
+                    var ch = $(window).height();
+
+                    if(timer<6){
+                        if(sh+ch>ys-50){
+                            timer++;
+
+                            // jquery的写法                       $(".goods").eq(0).clone().appendTo(".goodslist")
+                            //后台的写法
+                            $.get("6.php",function(res){
+                                //                            console.log(res);
+                                $(".goodslist").append(res);
+                            })
+                        }
+                    }
+                })
+
+
+            })
+        </script>
+    </head>
+    <body>
+        <ul class="goodslist">
+            <li class="goods">
+                <div class="shangpin"><img src="img/8.png" alt=""></div>
+                <div class="jiage">价格:<span class="jiage-v">22.1</span>元</div>
+                <div class="shuliang">数量:<input type="text" class="number" value="0">
+                    <button class="add">+</button>
+                    <button class="minus">-</button>
+                </div>
+                <div class="zongjia">总价:<span class="zongjia-v"></span></div>
+            </li>
+
+
+            <li class="goods">
+                <div class="shangpin"><img src="img/7.png" alt=""></div>
+                <div class="jiage">价格:<span class="jiage-v">12.3</span>元</div>
+                <div class="shuliang">数量:<input type="text" class="number" value="0">
+                    <button class="add">+</button>
+                    <button class="minus">-</button>
+                </div>
+                <div class="zongjia">总价:<span class="zongjia-v"></span></div>
+            </li>
+
+
+            <li class="goods">
+                <div class="shangpin"><img src="img/6.png" alt=""></div>
+                <div class="jiage">价格:<span class="jiage-v">30.4</span>元</div>
+                <div class="shuliang">数量:<input type="text" class="number" value="0">
+                    <button class="add">+</button>
+                    <button class="minus">-</button>
+                </div>
+                <div class="zongjia">总价:<span class="zongjia-v"></span></div>
+            </li>
+
+        </ul>
+
+
+        <div class="zonghe">总和:<span class="zonghe-v">0</span>元</div>
+
+        <h2 class="load">正在加载中...</h2>
+    </body>
+</html>
